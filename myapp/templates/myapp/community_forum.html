@@ -1,0 +1,270 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Community Forum</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #E8F5E9, #FFF8E1, #F1F8E9, #FFF3E0);
+      margin: 0;
+      padding: 0;
+      color: #333;
+      overflow-x: hidden;
+    }
+
+    /* ===== SIDEBAR (Homepage Style) ===== */
+    .sidebar {
+      height: 100%;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: linear-gradient(180deg, #228B22, #FF9800);
+      overflow-x: hidden;
+      transition: 0.4s;
+      padding-top: 60px;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      color: #fff;
+      margin: 0;
+      padding: 10px 0;
+      font-size: 1.4rem;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.15);
+      backdrop-filter: blur(5px);
+    }
+
+    .sidebar a {
+      padding: 12px 24px;
+      text-decoration: none;
+      font-size: 1.1rem;
+      color: white;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255,255,255,0.2);
+      border-left: 4px solid white;
+    }
+
+    /* ===== HAMBURGER BUTTON ===== */
+    .hamburger {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #228B22, #FF9800);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      z-index: 1100;
+      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .hamburger:hover {
+      transform: scale(1.1);
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    .main-content {
+      margin-left: 250px;
+      transition: 0.4s;
+      padding: 20px;
+    }
+
+    /* Collapsed State */
+    .collapsed .sidebar {
+      left: -250px;
+    }
+
+    .collapsed .main-content {
+      margin-left: 0;
+    }
+
+    /* ===== CHAT CONTAINER ===== */
+    .chat-container {
+      max-width: 750px;
+      margin: 30px auto;
+      background: #ffffff;
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      height: 80vh;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    .chat-box {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Messages */
+    .message {
+      max-width: 70%;
+      margin-bottom: 14px;
+      padding: 14px 18px;
+      border-radius: 18px;
+      line-height: 1.5;
+      font-size: 0.95rem;
+      position: relative;
+      word-wrap: break-word;
+      animation: fadeIn 0.3s ease;
+    }
+    .message small {
+      display: block;
+      font-size: 0.75rem;
+      color: #555;
+      margin-top: 6px;
+    }
+    .user-msg {
+      background: #FFE0B2;
+      color: #5D4037;
+      align-self: flex-start;
+      border-bottom-left-radius: 6px;
+    }
+    .admin-msg {
+      background: #C8E6C9;
+      color: #1B5E20;
+      align-self: flex-end;
+      border-bottom-right-radius: 6px;
+    }
+
+    /* Input area */
+    .chat-input {
+      display: flex;
+      padding: 15px;
+      border-top: 2px solid #f0f0f0;
+      background: #fafafa;
+      border-radius: 0 0 15px 15px;
+    }
+
+    textarea {
+      flex: 1;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      resize: none;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: #228B22;
+      box-shadow: 0 0 6px rgba(34,139,34,0.4);
+    }
+
+    button {
+      margin-left: 12px;
+      background: linear-gradient(135deg, #228B22, #FF9800);
+      color: white;
+      font-weight: bold;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #FF9800, #228B22);
+    }
+
+    /* Scrollbar */
+    .chat-box::-webkit-scrollbar {
+      width: 6px;
+    }
+    .chat-box::-webkit-scrollbar-thumb {
+      background: #FF9800;
+      border-radius: 3px;
+    }
+
+    /* Animation */
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(5px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    /* Responsive Sidebar */
+    @media (max-width: 768px) {
+      .sidebar { left: -250px; }
+      .collapsed .sidebar { left: 0; }
+      .main-content { margin-left: 0; }
+      .hamburger { top: 10px; left: 10px; }
+    }
+  </style>
+</head>
+
+<body class="collapsed">
+
+  <!-- ===== Navigation (Homepage Style) ===== -->
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+
+  <div class="sidebar">
+    <h2>🌍 Climate Smart Agric</h2>
+    <a href="{% url 'index' %}">Home</a>
+    <a href="{% url 'adaptation_strategies' %}">Strategies</a>
+    <a href="{% url 'community_forum' %}">Community</a>
+    <a href="{% url 'crop_rec' %}">Crop Prediction</a>
+    <a href="{% url 'blog_news' %}">Blog</a>
+    <a href="{% url 'about_us' %}">About</a>
+    <a href="{% url 'help_support' %}">Help</a>
+    
+    {% if user.is_authenticated %}
+      <div class="user-info">👋 {{ user.username }}</div>
+      <a href="{% url 'logout' %}">🚪 Logout</a>
+    {% endif %}
+  </div>
+
+  <!-- ===== Page Content ===== -->
+  <div class="main-content">
+    <div class="chat-container">
+      <div class="chat-box">
+        {% for msg in messages %}
+          <div class="message {% if msg.is_admin_reply %}admin-msg{% else %}user-msg{% endif %}">
+            <p>{{ msg.content }}</p>
+            <small>
+              {% if msg.is_admin_reply %}
+                👨‍💼 Admin
+              {% else %}
+                🙋 {{ msg.user.username|default:"User" }}
+              {% endif %}
+              • {{ msg.created_at|date:"M d, Y H:i" }}
+            </small>
+          </div>
+        {% empty %}
+          <p style="text-align:center; color:#777;">No messages yet. Be the first to start the conversation 💬</p>
+        {% endfor %}
+      </div>
+
+      <form method="post" class="chat-input">
+        {% csrf_token %}
+        <textarea name="content" rows="2" placeholder="Type your message..." required></textarea>
+        <button type="submit">Send ➤</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.body.classList.toggle("collapsed");
+    }
+  </script>
+
+</body>
+</html>

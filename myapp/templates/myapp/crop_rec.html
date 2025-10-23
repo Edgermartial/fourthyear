@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🌾 Crop Recommendation | Climate Smart Agric</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #E8F5E9, #FFF3E0);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background: linear-gradient(180deg, #228B22, #FF9800);
+      color: #fff;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow-y: auto;
+      box-shadow: 3px 0 10px rgba(0,0,0,0.3);
+      transition: width 0.3s ease, transform 0.3s ease;
+      z-index: 20;
+    }
+    .sidebar.collapsed { width: 70px; }
+
+    .sidebar h2 {
+      text-align: center;
+      padding: 1rem 0;
+      margin: 0;
+      background: rgba(255,255,255,0.15);
+      font-size: 1.5rem;
+      transition: opacity 0.3s ease;
+    }
+    .sidebar.collapsed h2 { opacity: 0; }
+
+    .sidebar nav {
+      display: flex;
+      flex-direction: column;
+      padding: 10px;
+    }
+    .sidebar nav a {
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 18px;
+      border-radius: 8px;
+      margin: 4px 0;
+      font-weight: 500;
+      transition: background 0.3s, padding-left 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar nav a:hover {
+      background: rgba(255,255,255,0.25);
+      padding-left: 24px;
+    }
+
+    .user-info {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+
+    /* ✅ Visible, styled hamburger button */
+    .hamburger {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      width: 45px;
+      height: 40px;
+      background: linear-gradient(135deg, #228B22, #FF9800);
+      border: none;
+      border-radius: 10px;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      display: flex;
+      padding: 8px;
+      z-index: 100;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+    .hamburger:hover {
+      transform: scale(1.1);
+      background: linear-gradient(135deg, #FF9800, #228B22);
+    }
+    .hamburger span {
+      background: #fff;
+      height: 4px;
+      border-radius: 2px;
+      width: 80%;
+      transition: transform 0.3s, opacity 0.3s;
+    }
+
+    /* Content area */
+    .content {
+      margin-left: 240px;
+      width: calc(100% - 240px);
+      transition: margin-left 0.3s ease, width 0.3s ease;
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .sidebar.collapsed ~ .content {
+      margin-left: 70px;
+      width: calc(100% - 70px);
+    }
+
+    /* Mobile */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      .content {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+
+    /* Form Container */
+    .container {
+      background: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+      width: 400px;
+      max-width: 90%;
+      margin-top: 60px;
+    }
+    h2 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-weight: bold;
+      color: #444;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #2E7D32, #FF9800);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+      background: linear-gradient(135deg, #FF9800, #2E7D32);
+    }
+
+    #result {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-align: center;
+      color: #2E7D32;
+    }
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+    #planting-btn {
+      display: none;
+      margin-top: 15px;
+    }
+
+    footer {
+      background: linear-gradient(90deg, #228B22, #FF9800);
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 0.95rem;
+      margin-top: 60px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 900px;
+      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ✅ Visible Hamburger -->
+  <button class="hamburger" onclick="toggleSidebar()">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <h2>🌍 Climate Smart Agric</h2>
+    <nav>
+      <a href="{% url 'index' %}">🏠 Home</a>
+      <a href="{% url 'adaptation_strategies' %}">🌱 Strategies</a>
+      <a href="{% url 'community_forum' %}">💬 Community</a>
+      <a href="{% url 'crop_rec' %}">🌾 Crop Prediction</a>
+      <a href="{% url 'blog_news' %}">📰 Blog</a>
+      <a href="{% url 'about_us' %}">ℹ️ About</a>
+      <a href="{% url 'help_support' %}">❓ Help</a>
+
+      {% if user.is_authenticated %}
+        <div class="user-info">👋 {{ user.username }}</div>
+        <a href="{% url 'logout' %}">🚪 Logout</a>
+      {% endif %}
+    </nav>
+  </aside>
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="container">
+      <h2>🌱 Crop Recommendation System</h2>
+      <form id="cropForm">
+        <label for="nitrogen">Nitrogen (N):</label>
+        <input type="number" step="any" id="nitrogen" required>
+
+        <label for="phosphorus">Phosphorus (P):</label>
+        <input type="number" step="any" id="phosphorus" required>
+
+        <label for="potassium">Potassium (K):</label>
+        <input type="number" step="any" id="potassium" required>
+
+        <label for="temperature">Temperature (°C):</label>
+        <input type="number" step="any" id="temperature" required>
+
+        <label for="humidity">Humidity (%):</label>
+        <input type="number" step="any" id="humidity" required>
+
+        <label for="ph">Soil pH:</label>
+        <input type="number" step="any" id="ph" required>
+
+        <label for="rainfall">Rainfall (mm):</label>
+        <input type="number" step="any" id="rainfall" required>
+
+        <button type="submit">Get Recommendation</button>
+      </form>
+
+      <div id="result"></div>
+      <div class="error" id="error"></div>
+
+      <button id="planting-btn" onclick="goToPlanting()">🌾 Predict Best Planting Time</button>
+    </div>
+
+    <footer>
+      <p>&copy; 2025 Climate Smart Agric | All Rights Reserved 🌎</p>
+    </footer>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      const sidebar = document.getElementById("sidebar");
+      if (window.innerWidth <= 768) {
+        sidebar.classList.toggle("active");
+      } else {
+        sidebar.classList.toggle("collapsed");
+      }
+    }
+
+    document.getElementById("cropForm").addEventListener("submit", async function(e) {
+      e.preventDefault();
+
+      const data = {
+        nitrogen: parseFloat(document.getElementById("nitrogen").value),
+        phosphorus: parseFloat(document.getElementById("phosphorus").value),
+        potassium: parseFloat(document.getElementById("potassium").value),
+        temperature: parseFloat(document.getElementById("temperature").value),
+        humidity: parseFloat(document.getElementById("humidity").value),
+        ph: parseFloat(document.getElementById("ph").value),
+        rainfall: parseFloat(document.getElementById("rainfall").value),
+      };
+
+      try {
+        const response = await fetch("/recommend/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const resultDiv = document.getElementById("result");
+        const errorDiv = document.getElementById("error");
+        const plantingBtn = document.getElementById("planting-btn");
+
+        resultDiv.textContent = "";
+        errorDiv.textContent = "";
+        plantingBtn.style.display = "none";
+
+        if (response.ok) {
+          const result = await response.json();
+          if (result.recommended_crop) {
+            resultDiv.textContent = "✅ Recommended Crop: " + result.recommended_crop;
+            plantingBtn.style.display = "block";
+          }
+        } else {
+          const err = await response.json();
+          errorDiv.textContent = "❌ Error: " + (err.error || "Request failed");
+        }
+      } catch (err) {
+        document.getElementById("error").textContent = "❌ Error: " + err.message;
+      }
+    });
+
+    function goToPlanting() {
+      window.location.href = "/predict/";
+    }
+  </script>
+</body>
+</html>

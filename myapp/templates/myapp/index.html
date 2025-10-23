@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Climate Smart Agric</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #E8F5E9, #FFF8E1, #F1F8E9, #FFF3E0);
+      color: #228B22;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      height: 100%;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: linear-gradient(180deg, #228B22, #FF9800);
+      overflow-x: hidden;
+      transition: 0.4s;
+      padding-top: 60px;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+
+    .sidebar a {
+      padding: 12px 24px;
+      text-decoration: none;
+      font-size: 1.1rem;
+      color: white;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255,255,255,0.2);
+      border-left: 4px solid white;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      color: #fff;
+      margin: 0;
+      padding: 10px 0;
+      font-size: 1.4rem;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.15);
+      backdrop-filter: blur(5px);
+    }
+
+    /* Hamburger Button */
+    .hamburger {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #228B22, #FF9800);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      z-index: 1100;
+      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .hamburger:hover {
+      transform: scale(1.1);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      transition: 0.4s;
+      padding: 20px;
+    }
+
+    /* Collapsed state */
+    .collapsed .sidebar {
+      left: -250px;
+    }
+
+    .collapsed .main-content {
+      margin-left: 0;
+    }
+
+    /* Slideshow */
+    .slideshow {
+      position: relative;
+      max-width: 100%;
+      height: 420px;
+      overflow: hidden;
+      border-radius: 16px;
+    }
+
+    .slides {
+      display: none;
+      width: 100%;
+      height: 420px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .cta {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(34, 139, 34, 0.8);
+      color: #ffffff;
+      padding: 30px;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      max-width: 600px;
+      backdrop-filter: blur(6px);
+    }
+
+    .cta h2 {
+      margin: 0;
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+
+    .cta p {
+      margin: 15px 0;
+      font-size: 1.1rem;
+    }
+
+    .cta a {
+      background: linear-gradient(135deg, #FF9800, #228B22);
+      color: white;
+      padding: 12px 22px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.05rem;
+      transition: 0.3s;
+      display: inline-block;
+      margin-top: 10px;
+    }
+
+    .cta a:hover {
+      background: linear-gradient(135deg, #228B22, #FF9800);
+    }
+
+    /* Sections */
+    section.intro {
+      text-align: center;
+      margin-bottom: 40px;
+      background: linear-gradient(145deg, #ffffff, #fdfdfd, #fafafa);
+      padding: 35px;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    section.intro h2 {
+      color: #228B22;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    section.intro p {
+      font-size: 1.15rem;
+      color: #333;
+    }
+
+    section.cards {
+      display: flex;
+      justify-content: space-around;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .card {
+      background: linear-gradient(165deg, #ffffff, #fdfdfd, #F1F8E9);
+      padding: 25px;
+      border-radius: 16px;
+      flex: 1;
+      margin: 10px;
+      text-align: center;
+      transition: 0.3s;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      min-width: 260px;
+    }
+
+    .card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.2);
+    }
+
+    .card h3 {
+      color: #FF9800;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .card p {
+      color: #228B22;
+      font-size: 1rem;
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(90deg, #228B22, #FF9800);
+      color: #ffffff;
+      text-align: center;
+      padding: 15px;
+      font-size: 0.95rem;
+      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.25);
+      margin-top: 40px;
+    }
+
+    /* Floating Chat Button */
+    .message-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: linear-gradient(135deg, #228B22, #FF9800);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 1.8rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      transition: 0.3s;
+      z-index: 100;
+    }
+
+    .message-button:hover {
+      transform: scale(1.1);
+    }
+
+    /* Chat Popup */
+    .chat-popup {
+      display: none;
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+      z-index: 100;
+      background: white;
+      width: 300px;
+      animation: fadeIn 0.3s ease;
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: linear-gradient(90deg, #228B22, #FF9800);
+      color: white;
+      padding: 12px;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .chat-body {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-body input, .chat-body textarea {
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 8px;
+      margin-bottom: 8px;
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    .chat-body textarea {
+      height: 60px;
+      resize: none;
+    }
+
+    .chat-body button {
+      background: linear-gradient(135deg, #FF9800, #228B22);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .chat-body button:hover {
+      background: linear-gradient(135deg, #228B22, #FF9800);
+    }
+
+    .chat-messages {
+      max-height: 150px;
+      overflow-y: auto;
+      margin-bottom: 8px;
+      padding-right: 4px;
+    }
+
+    .user-msg {
+      background: #E8F5E9;
+      color: #228B22;
+      border-radius: 8px;
+      padding: 6px;
+      margin: 4px 0;
+      font-size: 0.9rem;
+    }
+
+    .system-msg {
+      background: #FFF3E0;
+      color: #FF9800;
+      border-radius: 8px;
+      padding: 6px;
+      margin: 4px 0;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -250px;
+      }
+      .main-content {
+        margin-left: 0;
+      }
+      .hamburger {
+        top: 10px;
+        left: 10px;
+      }
+      .collapsed .sidebar {
+        left: 0;
+      }
+    }
+  </style>
+</head>
+<body class="collapsed">
+
+  <!-- Hamburger Button -->
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <h2>🌍 Climate Smart Agric</h2>
+    <a href="{% url 'index' %}">Home</a>
+    <a href="{% url 'adaptation_strategies' %}">Strategies</a>
+    <a href="{% url 'community_forum' %}">Community</a>
+    <a href="{% url 'crop_rec' %}">Crop Prediction</a>
+    <a href="{% url 'blog_news' %}">Blog</a>
+    <a href="{% url 'about_us' %}">About</a>
+    <a href="{% url 'help_support' %}">Help</a>
+
+    {% if user.is_authenticated %}
+      <div class="user-info">👋 {{ user.username }}</div>
+      <a href="{% url 'logout' %}">🚪 Logout</a>
+    {% endif %}
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Slideshow -->
+    <div class="slideshow">
+      <div class="slides" style="background-image:url('https://source.unsplash.com/1600x420/?ocean,climate')"></div>
+      <div class="slides" style="background-image:url('https://source.unsplash.com/1600x420/?river,water')"></div>
+      <div class="slides" style="background-image:url('https://source.unsplash.com/1600x420/?forest,nature')"></div>
+      <div class="slides" style="background-image:url('https://source.unsplash.com/1600x420/?farm,green')"></div>
+
+      <div class="cta">
+        <h2>AI for Climate & Food Security</h2>
+        <p>Empowering decisions for a sustainable future 🌱</p>
+        <a href="{% url 'dashboard' %}">Explore Dashboard</a>
+      </div>
+    </div>
+
+    <section class="intro">
+      <h2>Welcome to the Climate Adaptation Platform</h2>
+      <p>Our platform leverages AI to help communities adapt to climate change and ensure food security.</p>
+    </section>
+
+    <section class="cards">
+      <div class="card">
+        <h3>📊 Data Insights</h3>
+        <p>Real-time analysis of climate and food trends.</p>
+      </div>
+      <div class="card">
+        <h3>🤖 Predictive Models</h3>
+        <p>AI-driven predictions for better planning.</p>
+      </div>
+      <div class="card">
+        <h3>🌱 Adaptation Strategies</h3>
+        <p>Practical solutions for climate resilience.</p>
+      </div>
+    </section>
+
+    <footer>
+      <p>&copy; 2025 Climate Adaptation Platform</p>
+    </footer>
+  </div>
+
+  <!-- Floating Message Button -->
+  <button class="message-button" onclick="toggleChat()">💬</button>
+
+  <!-- Chat Popup -->
+  <div class="chat-popup" id="chatBox">
+    <div class="chat-header">Chat with Us 💬</div>
+    <div class="chat-body">
+      <input type="text" id="chatName" placeholder="Your name (optional)">
+      <input type="email" id="chatEmail" placeholder="Your email (optional)">
+      <div id="chatMessages" class="chat-messages"></div>
+      <textarea id="chatText" placeholder="Type your message..."></textarea>
+      <button onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.body.classList.toggle("collapsed");
+    }
+
+    // Slideshow
+    let slideIndex = 0;
+    function showSlides() {
+      let slides = document.getElementsByClassName("slides");
+      for (let i = 0; i < slides.length; i++) slides[i].style.display = "none";
+      slideIndex++;
+      if (slideIndex > slides.length) slideIndex = 1;
+      slides[slideIndex - 1].style.display = "block";
+      setTimeout(showSlides, 4000);
+    }
+    showSlides();
+
+    // Chat
+    function toggleChat() {
+      const chat = document.getElementById("chatBox");
+      chat.style.display = chat.style.display === "block" ? "none" : "block";
+    }
+
+    function getCSRFToken() {
+      const name = 'csrftoken';
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        cookie = cookie.trim();
+        if (cookie.startsWith(name + '=')) {
+          return cookie.substring(name.length + 1);
+        }
+      }
+      return '';
+    }
+
+    async function sendMessage() {
+      const name = document.getElementById("chatName").value;
+      const email = document.getElementById("chatEmail").value;
+      const text = document.getElementById("chatText").value.trim();
+      const chatMessages = document.getElementById("chatMessages");
+
+      if (!text) {
+        addMessage("System", "⚠️ Please enter a message before sending!");
+        return;
+      }
+
+      addMessage(name || "You", text);
+      document.getElementById("chatText").value = "";
+
+      try {
+        const response = await fetch("{% url 'send_message' %}", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCSRFToken(),
+          },
+          body: JSON.stringify({ name, email, message: text }),
+        });
+
+        const data = await response.json();
+        if (data.status === "success") {
+          addMessage("System", "✅ Thank you! Your message has been received. Our team will respond soon.");
+        } else {
+          addMessage("System", "❌ Error: " + data.message);
+        }
+      } catch (error) {
+        addMessage("System", "⚠️ Unable to send message. Please try again later.");
+        console.error(error);
+      }
+    }
+
+    function addMessage(sender, text) {
+      const chatMessages = document.getElementById("chatMessages");
+      const msg = document.createElement("div");
+      msg.className = sender === "You" ? "user-msg" : "system-msg";
+      msg.textContent = sender + ": " + text;
+      chatMessages.appendChild(msg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>About Us - Climate Smart Agric</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #E8F5E9, #FFF8E1, #F1F8E9, #FFF3E0);
+      color: #333;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      height: 100%;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: linear-gradient(180deg, #228B22, #FF9800);
+      overflow-x: hidden;
+      transition: 0.4s;
+      padding-top: 60px;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      color: #fff;
+      margin: 0;
+      padding: 10px 0;
+      font-size: 1.4rem;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.15);
+      backdrop-filter: blur(5px);
+    }
+
+    .sidebar a {
+      padding: 12px 24px;
+      text-decoration: none;
+      font-size: 1.05rem;
+      color: white;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255,255,255,0.2);
+      border-left: 4px solid white;
+    }
+
+    .user-info {
+      text-align: center;
+      color: #fff;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+
+    /* Hamburger Button */
+    .hamburger {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #228B22, #FF9800);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      z-index: 1100;
+      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .hamburger:hover {
+      transform: scale(1.1);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      transition: 0.4s;
+      padding: 40px 20px;
+    }
+
+    /* Collapsed state */
+    .collapsed .sidebar {
+      left: -250px;
+    }
+
+    .collapsed .main-content {
+      margin-left: 0;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -250px;
+      }
+      .collapsed .sidebar {
+        left: 0;
+      }
+      .main-content {
+        margin-left: 0;
+      }
+    }
+
+    /* Card style */
+    section.card {
+      background: rgba(255,255,255,0.95);
+      padding: 25px;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      transition: 0.3s;
+    }
+
+    section.card:hover {
+      transform: scale(1.02);
+    }
+
+    h2 {
+      color: #2E7D32;
+      font-weight: 700;
+    }
+
+    p {
+      color: #444;
+      font-size: 1.1rem;
+    }
+
+    /* Team section */
+    .team-cards {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .team-member {
+      flex: 1;
+      min-width: 220px;
+      background: rgba(255,255,255,0.95);
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+
+    .team-member:hover {
+      transform: scale(1.05);
+      background: #FFF3E0;
+    }
+
+    .team-member span {
+      color: #2E7D32;
+      font-weight: 500;
+      display: block;
+      margin-top: 5px;
+    }
+
+    a.contact-link {
+      color: #FF9800;
+      font-weight: bold;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    a.contact-link:hover {
+      color: #2E7D32;
+    }
+
+    /* Footer */
+    footer {
+      background: linear-gradient(90deg, #228B22, #FF9800);
+      color: white;
+      text-align: center;
+      padding: 15px;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.25);
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body class="collapsed">
+
+  <!-- Hamburger Button -->
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>🌍 Climate Smart Agric</h2>
+    <a href="{% url 'index' %}">🏠 Home</a>
+    <a href="{% url 'adaptation_strategies' %}">🌱 Strategies</a>
+    <a href="{% url 'community_forum' %}">💬 Community</a>
+    <a href="{% url 'crop_rec' %}">🌾 Crop Prediction</a>
+    <a href="{% url 'blog_news' %}">📰 Blog</a>
+    <a href="{% url 'about_us' %}">ℹ️ About</a>
+    <a href="{% url 'help_support' %}">❓ Help</a>
+    
+    {% if user.is_authenticated %}
+      <div class="user-info">👋 {{ user.username }}</div>
+      <a href="{% url 'logout' %}">🚪 Logout</a>
+    {% endif %}
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+
+    <!-- Mission -->
+    <section class="card">
+      <h2>Our Mission</h2>
+      <p>
+        We aim to empower communities with AI tools for climate adaptation and food security.
+        Our work brings together science, technology, and community knowledge to ensure a
+        sustainable and resilient future.
+      </p>
+    </section>
+
+    <!-- Team -->
+    <section>
+      <h2>Meet the Team</h2>
+      <div class="team-cards">
+        <div class="team-member">
+          👩‍🔬 <strong>Dr. Jane Smith</strong>
+          <span>Climate Scientist</span>
+        </div>
+        <div class="team-member">
+          👨‍💻 <strong>John Doe</strong>
+          <span>AI Engineer</span>
+        </div>
+        <div class="team-member">
+          🌱 <strong>Sara Lee</strong>
+          <span>Sustainability Expert</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="card">
+      <h2>Contact Us</h2>
+      <p>We’d love to hear from you! Reach us at:</p>
+      <p>Email: <a href="mailto:info@climateai.org" class="contact-link">info@climateai.org</a></p>
+    </section>
+
+    <footer>
+      <p>&copy; 2025 Climate Adaptation Platform</p>
+    </footer>
+
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.body.classList.toggle("collapsed");
+    }
+  </script>
+
+</body>
+</html>

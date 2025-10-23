@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blog & News</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #E8F5E9, #FFF8E1, #F1F8E9);
+      color: #1B5E20;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar Navigation (from homepage) */
+    .sidebar {
+      height: 100%;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: linear-gradient(180deg, #228B22, #FF9800);
+      overflow-x: hidden;
+      transition: 0.4s;
+      padding-top: 60px;
+      box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+    }
+
+    .sidebar a {
+      padding: 12px 24px;
+      text-decoration: none;
+      font-size: 1.1rem;
+      color: white;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-left: 4px solid white;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      color: #fff;
+      margin: 0;
+      padding: 10px 0;
+      font-size: 1.4rem;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(5px);
+    }
+
+    /* Hamburger Button */
+    .hamburger {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #228B22, #FF9800);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      z-index: 1100;
+      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .hamburger:hover {
+      transform: scale(1.1);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      transition: 0.4s;
+      padding: 30px;
+      max-width: 1000px;
+      margin-right: auto;
+    }
+
+    /* Collapsed state */
+    .collapsed .sidebar {
+      left: -250px;
+    }
+
+    .collapsed .main-content {
+      margin-left: 0;
+    }
+
+    h2 {
+      color: #228B22;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    article {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+
+    article:hover {
+      transform: translateY(-5px);
+      background: #F1F8E9;
+    }
+
+    article h3 {
+      margin-top: 0;
+      color: #FF9800;
+      font-size: 1.4rem;
+    }
+
+    article p {
+      margin-bottom: 15px;
+      font-size: 1rem;
+      color: #333;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #228B22, #FF9800);
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: transform 0.2s ease, background 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #FF9800, #228B22);
+      transform: scale(1.05);
+    }
+
+    footer {
+      background: linear-gradient(90deg, #228B22, #FF9800);
+      color: #ffffff;
+      text-align: center;
+      padding: 15px;
+      font-size: 0.95rem;
+      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.25);
+      margin-top: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -250px;
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .collapsed .sidebar {
+        left: 0;
+      }
+
+      .hamburger {
+        top: 10px;
+        left: 10px;
+      }
+    }
+  </style>
+</head>
+<body class="collapsed">
+
+  <!-- Hamburger Button -->
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <h2>🌍 Climate Smart Agric</h2>
+    <a href="{% url 'index' %}">Home</a>
+    <a href="{% url 'adaptation_strategies' %}">Strategies</a>
+    <a href="{% url 'community_forum' %}">Community</a>
+    <a href="{% url 'crop_rec' %}">Crop Prediction</a>
+    <a href="{% url 'blog_news' %}">Blog</a>
+    <a href="{% url 'about_us' %}">About</a>
+    <a href="{% url 'help_support' %}">Help</a>
+
+    {% if user.is_authenticated %}
+      <div class="user-info">👋 {{ user.username }}</div>
+      <a href="{% url 'logout' %}">🚪 Logout</a>
+    {% endif %}
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <h2>Latest Articles</h2>
+
+    <article>
+      <h3>AI in Agriculture 🌾</h3>
+      <p>How predictive analytics is shaping farming practices for climate resilience and better yields.</p>
+      <a href="https://www.fao.org/newsroom/detail/ai-can-be-a-game-changing-solution-for-farmers--fao-innovation-chief/en" target="_blank" class="btn">Read More</a>
+    </article>
+
+    <article>
+      <h3>Climate Resilience 🌍</h3>
+      <p>Discover how communities across the globe are adapting to changing weather patterns.</p>
+      <a href="https://www.un.org/en/climatechange/climate-adaptation" target="_blank" class="btn">Read More</a>
+    </article>
+
+    <article>
+      <h3>Water Security 💧</h3>
+      <p>Innovative solutions for managing droughts, floods, and shifting precipitation patterns.</p>
+      <a href="https://www.unep.org/topics/climate-action/adaptation" target="_blank" class="btn">Read More</a>
+    </article>
+
+    <article>
+      <h3>How AI is helping small-scale farmers adapt 🌱</h3>
+      <p>Small-scale farmers in Malawi are using an AI chatbot to adapt to changing climate conditions and improve crop selection.</p>
+      <a href="https://apnews.com/article/31979c49ed66b8222ea6afe7e3247770" target="_blank" class="btn">Read More</a>
+    </article>
+
+    <article>
+      <h3>Australia's Cascading Climate Risks</h3>
+      <p>A recent government report warns that multiple extreme climate events will compound, making infrastructure, health systems, and ecosystems vulnerable.</p>
+      <a href="https://www.reuters.com/sustainability/cop/australia-faces-cascading-climate-risks-government-report-says-2025-09-15/" target="_blank" class="btn">Read More</a>
+    </article>
+
+    <article>
+      <h3>Adaptation’s Business Case Grows</h3>
+      <p>With climate impacts already here, adaptation becomes both essential and profitable — neglecting it could cost companies trillions.</p>
+      <a href="https://www.reuters.com/sustainability/sustainable-finance-reporting/investing-climate-adaptation-is-no-longer-optional-its-business-critical-2025-07-03/" target="_blank" class="btn">Read More</a>
+    </article>
+
+    <article>
+      <h3>AI Could Slash Emissions by Billions This Decade</h3>
+      <p>New research shows AI applications in food, energy, and transport could reduce global emissions by 3.2–5.4 billion tonnes annually by 2035.</p>
+      <a href="https://www.lse.ac.uk/granthaminstitute/news/new-study-finds-ai-could-reduce-global-emissions-annually-by-3-2-to-5-4-billion-tonnes-of-carbon-dioxide-equivalent-by-2035/" target="_blank" class="btn">Read More</a>
+    </article>
+
+    <article>
+      <h3>Even With Adaptation, Crop Yields Are Declining</h3>
+      <p>A study reveals that global temperatures are undermining yields of staple crops even when adaptive strategies are applied.</p>
+      <a href="https://sustainability.stanford.edu/news/climate-change-cuts-global-crop-yields-even-when-farmers-adapt" target="_blank" class="btn">Read More</a>
+    </article>
+
+    <footer>
+      <p>&copy; 2025 Climate Adaptation Platform</p>
+    </footer>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.body.classList.toggle("collapsed");
+    }
+  </script>
+
+</body>
+</html>

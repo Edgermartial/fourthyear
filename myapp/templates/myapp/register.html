@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register | Climate Smart Agric</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #E8F5E9, #FFF8E1, #F1F8E9, #FFF3E0);
+      color: #228B22;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    .container {
+      background: linear-gradient(165deg, #ffffff, #F1F8E9);
+      padding: 40px 30px;
+      border-radius: 18px;
+      width: 380px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+    h2 {
+      color: #228B22;
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button {
+      width: 100%;
+      background: linear-gradient(135deg, #228B22, #FF9800);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: linear-gradient(135deg, #FF9800, #228B22);
+    }
+    .msg {
+      color: #d32f2f;
+      font-size: 0.95rem;
+    }
+    p {
+      margin-top: 15px;
+    }
+    a {
+      color: #FF9800;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    a:hover {
+      color: #228B22;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🌱 Create Account</h2>
+
+    {% if messages %}
+      {% for msg in messages %}
+        <p class="msg">{{ msg }}</p>
+      {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+      {% csrf_token %}
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="email" name="email" placeholder="Email" required>
+      <input type="password" name="password1" placeholder="Password" required>
+      <input type="password" name="password2" placeholder="Confirm Password" required>
+      <button type="submit">Register</button>
+    </form>
+
+    <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+  </div>
+</body>
+</html>

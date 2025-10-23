@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Adaptation Strategies | Climate Smart Agric</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #E8F5E9, #FFF8E1, #F1F8E9, #FFF3E0);
+      color: #2E4632;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      height: 100%;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: linear-gradient(180deg, #228B22, #FF9800);
+      overflow-x: hidden;
+      transition: 0.4s;
+      padding-top: 60px;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      color: #fff;
+      margin: 0;
+      padding: 10px 0;
+      font-size: 1.4rem;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.15);
+      backdrop-filter: blur(5px);
+    }
+
+    .sidebar a {
+      padding: 12px 24px;
+      text-decoration: none;
+      font-size: 1.05rem;
+      color: white;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255,255,255,0.2);
+      border-left: 4px solid white;
+    }
+
+    .user-info {
+      text-align: center;
+      color: #fff;
+      margin-top: 10px;
+      font-weight: 500;
+    }
+
+    /* Hamburger Button */
+    .hamburger {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #228B22, #FF9800);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      z-index: 1100;
+      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .hamburger:hover {
+      transform: scale(1.1);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      transition: 0.4s;
+      padding: 40px 20px;
+    }
+
+    /* Collapsed state */
+    .collapsed .sidebar {
+      left: -250px;
+    }
+
+    .collapsed .main-content {
+      margin-left: 0;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -250px;
+      }
+      .collapsed .sidebar {
+        left: 0;
+      }
+      .main-content {
+        margin-left: 0;
+      }
+    }
+
+    /* Card styling */
+    .card {
+      background: rgba(255,255,255,0.95);
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+      transition: 0.3s;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .card:hover { transform: scale(1.02); }
+
+    h2 { color: #228B22; font-weight: 700; }
+
+    label { font-weight: bold; color: #2E7D32; }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+
+    button {
+      background: linear-gradient(135deg, #2E7D32, #FF9800);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #FF9800, #2E7D32);
+      transform: scale(1.05);
+    }
+
+    .results {
+      display: none;
+      background: #E8F5E9;
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 20px;
+    }
+
+    .results h3 { margin-top: 0; color: #1B5E20; }
+    .results ul { list-style: disc; margin-left: 20px; }
+
+    footer {
+      background: linear-gradient(90deg, #228B22, #FF9800);
+      color: white;
+      text-align: center;
+      padding: 15px;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.25);
+      margin-top: 40px;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body class="collapsed">
+
+  <!-- Hamburger Button -->
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>🌍 Climate Smart Agric</h2>
+    <a href="{% url 'index' %}">🏠 Home</a>
+    <a href="{% url 'adaptation_strategies' %}">🌱 Strategies</a>
+    <a href="{% url 'community_forum' %}">💬 Community</a>
+    <a href="{% url 'crop_rec' %}">🌾 Crop Prediction</a>
+    <a href="{% url 'blog_news' %}">📰 Blog</a>
+    <a href="{% url 'about_us' %}">ℹ️ About</a>
+    <a href="{% url 'help_support' %}">❓ Help</a>
+
+    {% if user.is_authenticated %}
+      <div class="user-info">👋 {{ user.username }}</div>
+      <a href="{% url 'logout' %}">🚪 Logout</a>
+    {% endif %}
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <section class="card">
+      <h2>📍 Enter Your Region / City</h2>
+      <form id="regionForm">
+        <label for="region">Region or City Name:</label>
+        <input type="text" id="region" placeholder="e.g. Nairobi, Kenya" required>
+        <button type="submit">Get Adaptation Strategies</button>
+      </form>
+    </section>
+
+    <section id="results" class="card results">
+      <h3>Detected Conditions & Recommended Strategies</h3>
+      <p><strong>Location:</strong> <span id="location"></span></p>
+      <p><strong>Temperature (current):</strong> <span id="temperature"></span> °C</p>
+      <p><strong>Rainfall (last hour):</strong> <span id="rainfall"></span> mm</p>
+      <p><strong>Soil Type:</strong> <span id="soil"></span></p>
+      <h4>Strategies:</h4>
+      <ul id="strategiesList"></ul>
+    </section>
+
+    <footer>
+      <p>&copy; 2025 Climate Smart Agric | All Rights Reserved 🌎</p>
+    </footer>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.body.classList.toggle("collapsed");
+    }
+
+    const form = document.getElementById('regionForm');
+    const resultsBox = document.getElementById('results');
+    const locEl = document.getElementById('location');
+    const tempEl = document.getElementById('temperature');
+    const rainfallEl = document.getElementById('rainfall');
+    const soilEl = document.getElementById('soil');
+    const strategiesList = document.getElementById('strategiesList');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const region = document.getElementById('region').value;
+
+      try {
+        const geoRes = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(region)}`);
+        const geoData = await geoRes.json();
+        if (!geoData || geoData.length === 0) {
+          alert("Could not find location. Try again.");
+          return;
+        }
+        const lat = geoData[0].lat;
+        const lon = geoData[0].lon;
+        locEl.textContent = geoData[0].display_name;
+
+        const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&hourly=precipitation`);
+        const weatherData = await weatherRes.json();
+        const current = weatherData.current_weather;
+        const temperature = current.temperature;
+        let rainfall = 0;
+        if (weatherData.hourly && weatherData.hourly.precipitation) {
+          rainfall = weatherData.hourly.precipitation[0] || 0;
+        }
+        tempEl.textContent = temperature;
+        rainfallEl.textContent = rainfall;
+
+        let soilType = "Unavailable";
+        try {
+          const soilRes = await fetch(`https://isda-africa.com/isdasoil?latitude=${lat}&longitude=${lon}`);
+          const soilData = await soilRes.json();
+          soilType = soilData.texture || "Unknown";
+        } catch (err) {
+          soilType = "Not available outside Africa";
+        }
+        soilEl.textContent = soilType;
+
+        let strategies = [];
+        if (temperature > 30) {
+          strategies.push("🌾 Plant heat-tolerant crops (sorghum, millet).");
+          strategies.push("🕶️ Use mulching & shade to reduce heat stress.");
+        } else if (temperature < 15) {
+          strategies.push("🥦 Favor cool-season crops (cabbage, peas).");
+        }
+
+        if (rainfall > 5) {
+          strategies.push("💦 Consider drainage & flood-tolerant crops (rice).");
+        } else if (rainfall < 1) {
+          strategies.push("🚰 Adopt irrigation and rainwater harvesting.");
+        }
+
+        if (soilType.toLowerCase().includes("clay")) {
+          strategies.push("🌱 Use raised beds or drainage for clay soils.");
+        }
+        if (soilType.toLowerCase().includes("sandy")) {
+          strategies.push("🌱 Add organic matter for water retention.");
+        }
+
+        if (strategies.length === 0) {
+          strategies.push("⚠️ Monitor local conditions closely.");
+        }
+
+        strategiesList.innerHTML = "";
+        strategies.forEach(s => {
+          const li = document.createElement('li');
+          li.textContent = s;
+          strategiesList.appendChild(li);
+        });
+
+        resultsBox.style.display = "block";
+
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        alert("Could not get data. Try again.");
+      }
+    });
+  </script>
+</body>
+</html>

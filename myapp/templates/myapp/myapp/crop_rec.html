@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crop Recommendation System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f7fa, #e8f5e9);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            width: 420px;
+        }
+        h2 {
+            text-align: center;
+            color: #2e7d32;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 6px;
+            color: #333;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #bbb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        button {
+            width: 100%;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1b5e20;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            display: none;
+        }
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #2e7d32;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #c62828;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🌱 Crop Recommendation</h2>
+        <form id="cropForm">
+            <div class="form-group">
+                <label for="nitrogen">Nitrogen (N)</label>
+                <input type="number" step="any" id="nitrogen" required>
+            </div>
+            <div class="form-group">
+                <label for="phosphorus">Phosphorus (P)</label>
+                <input type="number" step="any" id="phosphorus" required>
+            </div>
+            <div class="form-group">
+                <label for="potassium">Potassium (K)</label>
+                <input type="number" step="any" id="potassium" required>
+            </div>
+            <div class="form-group">
+                <label for="temperature">Temperature (°C)</label>
+                <input type="number" step="any" id="temperature" required>
+            </div>
+            <div class="form-group">
+                <label for="humidity">Humidity (%)</label>
+                <input type="number" step="any" id="humidity" required>
+            </div>
+            <div class="form-group">
+                <label for="ph">pH Value</label>
+                <input type="number" step="any" id="ph" required>
+            </div>
+            <div class="form-group">
+                <label for="rainfall">Rainfall (mm)</label>
+                <input type="number" step="any" id="rainfall" required>
+            </div>
+            <button type="submit">Get Recommendation</button>
+        </form>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        document.getElementById("cropForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            let data = {
+                nitrogen: document.getElementById("nitrogen").value,
+                phosphorus: document.getElementById("phosphorus").value,
+                potassium: document.getElementById("potassium").value,
+                temperature: document.getElementById("temperature").value,
+                humidity: document.getElementById("humidity").value,
+                ph: document.getElementById("ph").value,
+                rainfall: document.getElementById("rainfall").value
+            };
+
+            let resultDiv = document.getElementById("result");
+            resultDiv.style.display = "block";
+            resultDiv.className = "result";
+
+            try {
+                let response = await fetch("/recommend/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(data)
+                });
+
+                let res = await response.json();
+
+                if (res.error) {
+                    resultDiv.classList.add("error");
+                    resultDiv.textContent = "❌ Error: " + res.error;
+                } else {
+                    resultDiv.classList.add("success");
+                    resultDiv.innerHTML = `✅ Recommended Crop: <strong>${res.crop}</strong><br>
+                                           Confidence: ${(res.confidence * 100).toFixed(2)}%`;
+                }
+            } catch (err) {
+                resultDiv.classList.add("error");
+                resultDiv.textContent = "❌ Request failed: " + err;
+            }
+        });
+    </script>
+</body>
+</html>

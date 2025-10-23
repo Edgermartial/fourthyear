@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #E8F5E9, #FFF8E1, #F1F8E9, #FFF3E0);
+      color: #228B22;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Sidebar Navigation*/
+    .sidebar {
+      height: 100%;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: linear-gradient(180deg, #228B22, #FF9800);
+      overflow-x: hidden;
+      transition: 0.4s;
+      padding-top: 60px;
+      box-shadow: 4px 0 10px rgba(0,0,0,0.3);
+      z-index: 1000;
+    }
+
+    .sidebar a {
+      padding: 12px 24px;
+      text-decoration: none;
+      font-size: 1.1rem;
+      color: white;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255,255,255,0.2);
+      border-left: 4px solid white;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      color: #fff;
+      margin: 0;
+      padding: 10px 0;
+      font-size: 1.4rem;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      background: rgba(0,0,0,0.15);
+      backdrop-filter: blur(5px);
+    }
+
+    /* Hamburger Button */
+    .hamburger {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #228B22, #FF9800);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      z-index: 1100;
+      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .hamburger:hover {
+      transform: scale(1.1);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 250px;
+      transition: 0.4s;
+      padding: 20px;
+    }
+
+    /* Collapsed state */
+    .collapsed .sidebar {
+      left: -250px;
+    }
+    .collapsed .main-content {
+      margin-left: 0;
+    }
+
+    /* Responsive Sidebar */
+    @media (max-width: 768px) {
+      .sidebar { left: -250px; }
+      .collapsed .sidebar { left: 0; }
+      .main-content { margin-left: 0; }
+    }
+
+    /* Dashboard content */
+    h2 {
+      color: #228B22;
+      font-size: 1.6rem;
+      margin-bottom: 15px;
+      border-left: 5px solid #FF9800;
+      padding-left: 10px;
+    }
+
+    section { margin-bottom: 40px; }
+
+    .map-box {
+      width: 100%; height: 400px;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+      border: 2px solid #228B22;
+    }
+
+    .data-visuals {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .chart-container {
+      flex: 1;
+      min-width: 280px;
+      height: 280px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+      padding: 15px;
+      transition: 0.3s;
+    }
+
+    .chart-container:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      font-size: 1.05rem;
+    }
+
+    ul li {
+      margin: 10px 0;
+      padding: 14px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #E8F5E9, #FFF8E1);
+      font-weight: 500;
+      text-align: left;
+      cursor: pointer;
+      transition: 0.3s;
+      border-left: 5px solid #FF9800;
+    }
+
+    ul li:hover {
+      transform: scale(1.03);
+      background: linear-gradient(90deg, #FFF3E0, #E8F5E9);
+    }
+
+    .details {
+      display: none;
+      margin-top: 5px;
+      font-size: 0.95rem;
+      color: #2e7d32;
+      padding-left: 15px;
+    }
+
+    footer {
+      background: linear-gradient(90deg, #228B22, #FF9800);
+      color: #fff;
+      text-align: center;
+      padding: 15px;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.25);
+      margin-top: 40px;
+    }
+  </style>
+</head>
+
+<body class="collapsed">
+  <!-- Hamburger Button -->
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <h2>🌍 Climate Smart Agric</h2>
+    <a href="{% url 'index' %}">Home</a>
+    <a href="{% url 'dashboard' %}">Dashboard</a>
+    <a href="{% url 'adaptation_strategies' %}">Strategies</a>
+    <a href="{% url 'community_forum' %}">Community</a>
+    <a href="{% url 'crop_rec' %}">Crop Prediction</a>
+    <a href="{% url 'blog_news' %}">Blog</a>
+    <a href="{% url 'about_us' %}">About</a>
+    <a href="{% url 'help_support' %}">Help</a>
+
+    {% if user.is_authenticated %}
+      <div class="user-info">👋 {{ user.username }}</div>
+      <a href="{% url 'logout' %}">🚪 Logout</a>
+    {% endif %}
+  </div>
+
+  <!-- Main Dashboard Content -->
+  <div class="main-content">
+    <section>
+      <h2>Global Climate Map</h2>
+      <div id="worldMap" class="map-box"></div>
+    </section>
+
+    <section>
+      <h2>Data Visualizations</h2>
+      <div class="data-visuals">
+        <div class="chart-container">
+          <canvas id="tempChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <canvas id="precipChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Key Indicators</h2>
+      <ul>
+        <li onclick="toggleDetails(this)">🌡️ Temperature changes
+          <div class="details">Average global temperature increased by 1.2°C over the past century. Impacts include heatwaves and crop stress.</div>
+        </li>
+        <li onclick="toggleDetails(this)">💧 Precipitation patterns
+          <div class="details">Shifts in rainfall affect agriculture. Increased droughts in some regions and floods in others.</div>
+        </li>
+        <li onclick="toggleDetails(this)">🌾 Crop yields
+          <div class="details">Crop productivity fluctuates due to changing climate, affecting food security and local economies.</div>
+        </li>
+      </ul>
+    </section>
+
+    <footer>
+      <p>&copy; 2025 Climate Adaptation Platform</p>
+    </footer>
+  </div>
+
+  <script>
+    // Sidebar toggle
+    function toggleSidebar() {
+      document.body.classList.toggle("collapsed");
+    }
+
+    // Toggle details
+    function toggleDetails(li) {
+      const details = li.querySelector('.details');
+      details.style.display = (details.style.display === 'block') ? 'none' : 'block';
+    }
+
+    // Chart.js - Temperature Line Chart
+    const ctx1 = document.getElementById('tempChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: ['2000','2005','2010','2015','2020','2025'],
+        datasets: [{
+          label: 'Avg Temp (°C)',
+          data: [14.3,14.5,14.7,14.9,15.1,15.3],
+          borderColor: '#228B22',
+          backgroundColor: 'rgba(34,139,34,0.2)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: { responsive: true }
+    });
+
+    // Chart.js - Precipitation Bar Chart
+    const ctx2 = document.getElementById('precipChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+        datasets: [{
+          label: 'Rainfall (mm)',
+          data: [80, 60, 100, 120, 90, 110],
+          backgroundColor: '#FF9800',
+          borderColor: '#e65100',
+          borderWidth: 1
+        }]
+      },
+      options: { responsive: true }
+    });
+
+    // Leaflet Map
+    const map = L.map('worldMap').setView([20, 0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+    L.marker([0,0]).addTo(map).bindPopup('<b>Equator</b><br>Climate data center.');
+  </script>
+</body>
+</html>
