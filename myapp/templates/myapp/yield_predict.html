@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Crop Yield Predictor | Climate Smart Agric</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* ===== GLOBAL LAYOUT ===== */
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: linear-gradient(135deg, #E8F5E9, #FFF8E1, #F1F8E9, #FFF3E0);
+      color: #228B22;
+      overflow-x: hidden;
+    }
+
+    /* ===== SIDEBAR NAVIGATION ===== */
+    .sidebar {
+      height: 100%;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background: linear-gradient(180deg, #228B22, #FF9800);
+      padding-top: 60px;
+      box-shadow: 4px 0 10px rgba(0, 0, 0, 0.3);
+      z-index: 1000;
+      transition: 0.4s;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      color: #fff;
+      margin: 0;
+      padding: 10px 0;
+      font-size: 1.4rem;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      background: rgba(0, 0, 0, 0.15);
+      backdrop-filter: blur(5px);
+    }
+
+    .sidebar a {
+      padding: 12px 24px;
+      text-decoration: none;
+      font-size: 1.1rem;
+      color: white;
+      display: block;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      border-left: 4px solid white;
+    }
+
+    .hamburger {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, #228B22, #FF9800);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 14px;
+      cursor: pointer;
+      z-index: 1100;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: 0.3s;
+    }
+
+    .hamburger:hover {
+      transform: scale(1.1);
+    }
+
+    .main-content {
+      margin-left: 250px;
+      padding: 30px;
+      transition: 0.4s;
+      min-height: 100vh;
+    }
+
+    .collapsed .sidebar {
+      left: -250px;
+    }
+
+    .collapsed .main-content {
+      margin-left: 0;
+    }
+
+    /* ===== FORM STYLING ===== */
+    .container {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 30px 40px;
+      width: 90%;
+      max-width: 650px;
+      margin: 60px auto;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+      border-top: 5px solid #ffa726;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+      margin-bottom: 20px;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    label {
+      font-weight: 600;
+      color: #388e3c;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    input[type="number"],
+    select,
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #c8e6c9;
+      border-radius: 8px;
+      background-color: #f9fbe7;
+      color: #333;
+      font-size: 15px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    input[type="number"]:focus,
+    select:focus,
+    input[type="text"]:focus {
+      border-color: #81c784;
+      box-shadow: 0 0 6px rgba(129, 199, 132, 0.5);
+      outline: none;
+    }
+
+    button {
+      grid-column: 1 / -1;
+      background: linear-gradient(90deg, #43a047, #ffa726);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(90deg, #388e3c, #fb8c00);
+    }
+
+    .result-box {
+      margin-top: 30px;
+      text-align: center;
+      background: #f1f8e9;
+      padding: 20px;
+      border-radius: 12px;
+      border: 2px solid #a5d6a7;
+    }
+
+    .result-box h2 {
+      color: #2e7d32;
+      margin: 0;
+    }
+
+    .error {
+      margin-top: 20px;
+      background: #ffebee;
+      border: 1px solid #ef5350;
+      padding: 15px;
+      border-radius: 10px;
+      color: #c62828;
+      text-align: center;
+    }
+
+    footer {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 13px;
+      color: #fff;
+      background: linear-gradient(90deg, #228B22, #FF9800);
+      padding: 12px;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 -3px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -250px;
+      }
+      .main-content {
+        margin-left: 0;
+      }
+      .collapsed .sidebar {
+        left: 0;
+      }
+    }
+  </style>
+</head>
+<body class="collapsed">
+
+  <!-- Hamburger Button -->
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
+
+  <!-- Sidebar Navigation -->
+  <div class="sidebar">
+    <h2>🌍 Climate Smart Agric</h2>
+    <a href="{% url 'index' %}">🏠 Home</a>
+    <a href="{% url 'adaptation_strategies' %}">🌾 Strategies</a>
+    <a href="{% url 'community_forum' %}">💬 Community</a>
+    <a href="{% url 'crop_rec' %}">🌱 Crop Prediction</a>
+    <a href="{% url 'yield_predict' %}">📈 Yield Predictor</a>
+    <a href="{% url 'blog_news' %}">📰 Blog</a>
+    <a href="{% url 'about_us' %}">ℹ️ About</a>
+    <a href="{% url 'help_support' %}">🆘 Help</a>
+
+    {% if user.is_authenticated %}
+      <div class="user-info" style="padding: 12px 24px; color: #fff;">👋 {{ user.username }}</div>
+      <a href="{% url 'logout' %}">🚪 Logout</a>
+    {% endif %}
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container">
+      <h1>🌿 Crop Yield Predictor 🌾</h1>
+      <form method="POST">
+        {% csrf_token %}
+        {% for col in numeric_features %}
+          <div>
+            <label for="{{ col }}">{{ col|capfirst }}</label>
+            <input type="number" step="any" name="{{ col }}" id="{{ col }}" required>
+          </div>
+        {% endfor %}
+
+        {% for col in categorical_features %}
+          <div>
+            <label for="{{ col }}">{{ col|capfirst }}</label>
+            <input type="text" name="{{ col }}" id="{{ col }}" required>
+          </div>
+        {% endfor %}
+        <button type="submit">Predict Yield</button>
+      </form>
+
+      {% if prediction %}
+      <div class="result-box">
+        <h2>🌾 Predicted Yield: <strong>{{ prediction }}</strong> hg/ha</h2>
+      </div>
+      {% endif %}
+
+      {% if error_message %}
+      <div class="error">
+        ⚠️ {{ error_message }}
+      </div>
+      {% endif %}
+
+      <footer>
+        © 2025 Climate Smart Agric | All Rights Reserved 🌎
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    function toggleSidebar() {
+      document.body.classList.toggle("collapsed");
+    }
+  </script>
+</body>
+</html>

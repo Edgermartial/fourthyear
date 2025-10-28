@@ -13,7 +13,7 @@ import json
 from .models import Message, ChatMessage  # ✅ Forum + Chat models
 
 # ===============================
-# Models
+# Model Loading
 # ===============================
 
 weather_model_path = os.path.join(settings.BASE_DIR, 'myapp', 'weather_model.pkl')
@@ -39,6 +39,51 @@ WEATHER_CLASSES = {
     3: "sun ☀️",
     4: "fog 🌫️"
 }
+
+# === Load Yield Model & Metadata ===
+MODEL_PATH = os.path.join(settings.BASE_DIR, "myapp", "yield_model.pkl")
+META_PATH = os.path.join(settings.BASE_DIR, "myapp", "yield_metadata.pkl")
+
+model = joblib.load(MODEL_PATH)
+metadata = joblib.load(META_PATH)
+
+numeric_features = metadata.get("numeric_features", [])
+categorical_features = metadata.get("categorical_features", [])
+all_features = numeric_features + categorical_features
+
+# Exclude unwanted columns
+hidden_features = ["Unnamed: 0", "Year"]
+visible_numeric = [f for f in numeric_features if f not in hidden_features]
+visible_categorical = categorical_features.copy()
+
+# ===============================
+# Yield Prediction View
+# ===============================
+
+def yield_predict_view(request):
+    prediction = None
+    error_message = None
+    user_input = {}
+
+    if request.method == "POST":
+        try:
+            for col in visible_numeric:
+                user_input[col] = float(request.POST.get(col))
+            for col in visible_categorical:
+                user_input[col] = request.POST.get(col)
+
+            X_input = pd.DataFrame([[user_input.get(col, 0) for col in all_features]], columns=all_features)
+            prediction = round(float(model.predict(X_input)[0]), 2)
+        except Exception as e:
+            error_message = str(e)
+
+    context = {
+        "numeric_features": visible_numeric,
+        "categorical_features": visible_categorical,
+        "prediction": prediction,
+        "error_message": error_message,
+    }
+    return render(request, "myapp/yield_predict.html", context)
 
 # ===============================
 # Public Pages
@@ -71,6 +116,10 @@ def help_support(request):
     return render(request, 'myapp/help_support.html')
 
 @login_required(login_url='/accounts/login/')
+def yield_predict(request):
+    return render(request, 'myapp/yield_predict.html')
+
+@login_required(login_url='/accounts/login/')
 def adaptation_strategies(request):
     return render(request, 'myapp/adaptation_strategies.html')
 
@@ -97,23 +146,41 @@ def community_forum(request):
 # Authentication Views
 # ===============================
 
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.contrib import messages
+
 def register_view(request):
     if request.method == "POST":
         username = request.POST.get("username")
         email = request.POST.get("email")
         password = request.POST.get("password")
 
-        if not username or not password:
-            return render(request, "myapp/accounts/register.html", {"error": "Please fill all fields."})
-
         if User.objects.filter(username=username).exists():
-            return render(request, "myapp/accounts/register.html", {"error": "Username already exists."})
+            messages.error(request, "Username already taken. Try another one.")
+            return redirect("register")
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already registered.")
+            return redirect("register")
 
         user = User.objects.create_user(username=username, email=email, password=password)
         user.save()
-        return redirect("login")
 
-    return render(request, "myapp/accounts/register.html")
+        login(request, user)
+
+        # ✅ Send welcome email
+        subject = "🌱 Welcome to AgriSmart!"
+        context = {"username": username}
+        message = render_to_string("emails/welcome_email.html", context)
+        email_message = EmailMessage(subject, message, settings.DEFAULT_FROM_EMAIL, [email])
+        email_message.content_subtype = "html"
+        email_message.send()
+
+        messages.success(request, f"Welcome {username}! You are now logged in.")
+        return redirect("index")
+
+    return render(request, "myapp/register.html")
 
 
 def login_view(request):
@@ -132,7 +199,6 @@ def login_view(request):
 
 
 def logout_view(request):
-    """Logout user via GET (fixes HTTP 405 error)."""
     logout(request)
     return redirect("index")
 
@@ -245,7 +311,6 @@ def receive_message(request):
                 return JsonResponse({'status': 'error', 'message': 'Empty message'}, status=400)
 
             ChatMessage.objects.create(name=name, email=email, message=message_text)
-
             reply = "Thanks for your message! We'll get back to you soon. 🌿"
             return JsonResponse({'status': 'success', 'reply': reply})
         except Exception as e:

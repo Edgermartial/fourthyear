@@ -12,6 +12,7 @@ urlpatterns = [
     path('community_forum/', views.community_forum, name='community_forum'),
     path('adaptation_strategies/', views.adaptation_strategies, name='adaptation_strategies'),
     path('crop_rec/', views.crop_rec, name='crop_rec'),
+    path('yield_predict/', views.yield_predict_view, name='yield_predict'),
 
     # Authentication (clean URLs)
     path('accounts/register/', views.register_view, name='register'),
